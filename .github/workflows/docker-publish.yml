@@ -26,7 +26,7 @@ jobs:
         with:
           # context: . nghĩa là Dockerfile nằm ở thư mục gốc
           # Nếu Dockerfile nằm trong thư mục ai-service, hãy sửa thành ./ai-service
-          context: .
+          context: ./ai-service
           push: true
           # Tên Image sẽ có dạng: ten_cua_ban/ai-service:latest
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ai-service:latest
