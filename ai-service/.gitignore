@@ -138,3 +138,5 @@ Thumbs.db
 
 # Local development
 *.local
+data/
+*.db

@@ -12,18 +12,43 @@ services:
       - PYTHONUNBUFFERED=1
     env_file:
       - .env
+    depends_on:
+      db:
+        condition: service_healthy
     volumes:
       - .:/app
     restart: unless-stopped
     networks:
       - ai-network
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/health')"]
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health').read()"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 5s
 
+  db:
+    image: postgres:16-alpine
+    container_name: ai-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: ai_service
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d ai_service"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    networks:
+      - ai-network
+
 networks:
   ai-network:
     driver: bridge
+
+volumes:
+  pg_data:

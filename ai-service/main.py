@@ -3,6 +3,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from routes.chat import router as chat_router
 from config import settings
+from database import init_db
 
 app = FastAPI(
     title="TechNova AI Service",
@@ -20,6 +21,12 @@ app.add_middleware(
 
 # ── Register routes ──────────────────────────────────
 app.include_router(chat_router)
+
+
+@app.on_event("startup")
+def _startup():
+    from database import startup_db
+    startup_db()
 
 # ── Health check ─────────────────────────────────────
 @app.get("/health")
